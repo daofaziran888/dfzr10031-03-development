@@ -53,6 +53,30 @@ class DimensionEntry(BaseModel):
     field_6: str | None = None  # 排序规则
     field_7: str | None = None  # 维度状态
 
+class DimMappingEntry(BaseModel):
+    """维度归属映射明细结构。"""
+
+    field_0: str | None = None  # 版本号
+    field_1: str | None = None  # 维度编号
+    field_2: str | None = None  # 成员编码
+    field_3: str | None = None  # 成员名称
+    field_4: str | None = None  # 上级编码
+    field_5: str | None = None  # 上级名称
+    field_6: str | None = None  # 起始日期
+    field_7: str | None = None  # 截止日期
+
+class RegionSummaryEntry(BaseModel):
+    """地区收入汇总批次结构。"""
+
+    field_0: str | None = None  # 汇总批次号
+    field_1: str | None = None  # 业务日期
+    field_2: str | None = None  # 映射版本号
+    field_3: str | None = None  # 订单批次号
+    field_4: str | None = None  # 输入订单总额
+    field_5: str | None = None  # 地区收入合计
+    field_6: str | None = None  # 待核对金额
+    field_7: str | None = None  # 对账差额
+
 class DatasetEntry(BaseModel):
     """分析数据集明细结构。"""
 

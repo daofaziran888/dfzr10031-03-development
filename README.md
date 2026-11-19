@@ -51,6 +51,7 @@ npm run dev
 | --- | --- | --- | --- |
 | 指标定义 | `metric_def` | 指标 | 指标编号、指标名称、计算公式 |
 | 维度管理 | `dimension` | 分析维度 | 维度编号、维度名称、维度类型 |
+| 维度归属映射 | `dim_mapping` | 归属映射版本 | 版本号、成员编码、上级编码、起止日期 |
 | 数据集管理 | `dataset` | 分析数据集 | 数据集编号、数据集名称、来源类型 |
 | 分析实验 | `experiment` | 实验方案 | 方案编号、实验名称、分析数据集 |
 | OLAP查询 | `query_builder` | 查询模板 | 模板编号、模板名称、查询语句 |
@@ -74,3 +75,22 @@ npm run dev
   `backend/app/routers/<模块>.py`，业务规则在 `backend/app/services/<模块>.py`。
 - 列表接口统一返回 `{ items, total, page, size }`，动作接口统一返回 `{ ok, message }`。
 - 状态流转只允许在 `app/services` 里改，路由层不做业务判断。
+
+## 维度归属映射与地区收入汇总
+
+维度管理只登记层级定义；成员在哪天归属哪个上级由 `dim_mapping` 回答：
+
+- `POST /api/dim_mapping/relations` 接收维度版本区间及成员关系数据（更正批次），落入接收表等待归并。
+- `POST /api/dim_mapping/merge` 按成员归并出带起止日期的区间，生成新的映射版本快照；
+  交界当天最多归属一个上级；两份更正在同一成员同一天给出不同上级时登记冲突
+  （`GET /api/dim_mapping/conflicts`），后接收的更正生效，旧版本整体转历史但完整保留。
+- `GET /api/dim_mapping/lookup?member=&date=&version=` 按业务日查成员归属，可指定历史版本。
+- `POST /api/data_mart/region_summary` 由数据集市按业务日汇总地区收入：一次汇总只采用
+  同一份映射结果，无法归属的订单单独计入待核对金额，地区收入合计 + 待核对金额 = 输入订单总额；
+  指定历史映射版本可重现旧报表。
+- `GET /api/data_mart/region_summary/{id}/impact?baseline=` 对比同一业务日两次汇总，
+  让下游看到归属冲突对地区收入的影响。
+- `POST /api/data_mart/region_summary/{id}/review` 复核汇总批次：地区收入与待核对金额
+  共享同一个归属版本、对回输入订单总额，并回查订单数据源批次。
+
+后端测试：`cd backend && .venv/bin/python -m pytest tests/`。

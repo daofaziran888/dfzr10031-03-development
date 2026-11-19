@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeDashboard from '@/views/Dashboard.vue'
 const MetricDef = () => import('@/views/metric_def/index.vue')
 const Dimension = () => import('@/views/dimension/index.vue')
+const DimMapping = () => import('@/views/dim_mapping/index.vue')
 const Dataset = () => import('@/views/dataset/index.vue')
 const Experiment = () => import('@/views/experiment/index.vue')
 const QueryBuilder = () => import('@/views/query_builder/index.vue')
@@ -26,6 +27,7 @@ const router = createRouter({
     { path: '/', name: 'home', component: HomeDashboard },
     { path: '/metric_def', name: 'metric_def', component: MetricDef },
     { path: '/dimension', name: 'dimension', component: Dimension },
+    { path: '/dim_mapping', name: 'dim_mapping', component: DimMapping },
     { path: '/dataset', name: 'dataset', component: Dataset },
     { path: '/experiment', name: 'experiment', component: Experiment },
     { path: '/query_builder', name: 'query_builder', component: QueryBuilder },
